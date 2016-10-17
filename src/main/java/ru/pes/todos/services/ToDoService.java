@@ -44,6 +44,15 @@ public class ToDoService {
         return id;
     }
 
+    public int updateAllToDos(List<ToDo> todos) {
+        int result = 0;
+        for (ToDo todo : todos) {
+            result += updateToDo(todo.getId(), todo.getContent(), todo.isComplete());
+        }
+        System.out.println("todos.length: " + todos.size() + ", changed: " + result);
+        return result;
+    }
+
     public List<ToDo> findAllToDos() {
         String qString = "FROM Todo T ORDER BY id";
         TypedQuery<ToDo> tQuery = eManager.createQuery(qString, ToDo.class);

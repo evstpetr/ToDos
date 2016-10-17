@@ -36,6 +36,12 @@ public class MainController {
         return id;
     }
 
+    @RequestMapping("/utodos")
+    public void changeToDos(@RequestParam(value = "todos") List<ToDo> todos) {
+        todoService.updateAllToDos(todos);
+        return;
+    }
+
     @RequestMapping("/todos")
     public List<ToDo> getAllToDos() {
         return todoService.findAllToDos();

@@ -37,19 +37,14 @@ public class MainController {
     }
 
     @RequestMapping("/utodos")
-    public void changeToDos(@RequestParam(value = "todos") List<ToDo> todos) {
-        todoService.updateAllToDos(todos);
+    public void changeToDos(@RequestParam(value = "complete") boolean complete) {
+        todoService.updateAllToDos(complete);
         return;
     }
 
     @RequestMapping("/todos")
     public List<ToDo> getAllToDos() {
         return todoService.findAllToDos();
-    }
-
-    @RequestMapping("/partoftodos")
-    public List<ToDo> getPartOfToDos(@RequestParam(value = "complete") boolean complete) {
-        return todoService.findToDosByCriteria(complete);
     }
 
 }

@@ -1,16 +1,22 @@
 $(document).ready(function () {
+    $("#all-cb").prop("checked", false);
     $("#all-cb").click(function () {
-        if ($("#div_mid").children("div").length > 0) {
-            var todos = [];
-            for (i = 0; i < $("#div_mid").children("div").length; i++) {
-                var div = $("#div_mid").children("div");
-                todos.push({"id": div.prop("id").substring(4), "content": div.children("input[type=text]").val(), "complete": div.children("input[type=checkbox]").is(":checked")});
-            }
-            $.ajax({
-                url: "utodos",
-                data: {todos: JSON.stringify(todos)}
-            }).then(function(){});
-        }
+        var checked = $(this).is(":checked");
+        $.ajax({
+            url: "utodos",
+            data: {complete: checked}
+        }).then(function () {
+            $("#div_mid").children().each(function () {
+                var cb_local = $(this).children("input[type=checkbox]").prop("checked", checked);
+                if (checked) {
+                    cb_local.parent().prop("class", "checked");
+                    setItemsHidden("active")
+                } else {
+                    cb_local.parent().removeAttr("class");
+                    setItemsHidden("completed")
+                }
+            })
+        });
     });
 
     $("#main").keypress(function (e) {
@@ -42,14 +48,12 @@ $(document).ready(function () {
                     }
                     updateItem(id_temp, content_temp, complete_temp);
                 }));
-                $("#div_" + data.id).append($("<input type=text value='" + data.content + "'>"));
+                $("#div_" + data.id).append($("<input type=text value='" + data.content + "' readonly>"));
                 $("#div_" + data.id).append($("<input type=button value='DEL'>").click(function () {
                     delItem($(this).parent().attr("id").substring(4));
                 }));
             });
-            if ($("#div_bot").is(":hidden")) {
-                $("#div_bot").removeAttr("hidden");
-            }
+            show();
         }
     });
 
@@ -132,10 +136,23 @@ $(document).ready(function () {
             data: {id: item_id}
         }).then(function (data) {
             $("#div_" + data).remove();
-            if ($(".div_mid").children().length == 0) {
-                $(".div_bot").prop("hidden", "hidden");
+            if ($("#div_mid").children("").length == 0) {
+               hide();
             }
             setItemsCount();
         })
     };
+
+    var hide = function() {
+        $("#all-cb").prop("checked", false);
+        $("#all-cb").prop("hidden", "hidden");
+        $("#div_bot").prop("hidden", "hidden");
+    }
+
+    var show = function() {
+        if ($("#all-cb").is(":hidden")) {
+            $("#all-cb").removeAttr("hidden");
+            $("#div_bot").removeAttr("hidden");
+        }
+    }
 });

@@ -44,26 +44,20 @@ public class ToDoService {
         return id;
     }
 
-    public int updateAllToDos(List<ToDo> todos) {
+    public int updateAllToDos(boolean complete) {
         int result = 0;
+        List<ToDo> todos = findAllToDos();
         for (ToDo todo : todos) {
-            result += updateToDo(todo.getId(), todo.getContent(), todo.isComplete());
+            result += updateToDo(todo.getId(), todo.getContent(), complete);
         }
-        System.out.println("todos.length: " + todos.size() + ", changed: " + result);
         return result;
     }
 
     public List<ToDo> findAllToDos() {
-        String qString = "FROM Todo T ORDER BY id";
-        TypedQuery<ToDo> tQuery = eManager.createQuery(qString, ToDo.class);
-        return tQuery.getResultList();
-    }
-
-    public List<ToDo> findToDosByCriteria(boolean complete) {
-        String qString = "FROM Todo T WHERE T.complete = ?";
-        TypedQuery<ToDo> tQuery = eManager.createQuery(qString, ToDo.class);
-        tQuery.setParameter(1, complete);
-        return tQuery.getResultList();
+        String qString = "SELECT T FROM ToDo T";
+        Query query = eManager.createQuery(qString);
+        List<ToDo> resultList = (List<ToDo>) query.getResultList();
+        return resultList;
     }
 
 }
